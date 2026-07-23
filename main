@@ -1,0 +1,353 @@
+-- HBV_dev Jailbird Mod Menu - Complete All-in-One Script
+-- Made by HBV_dev | Dev: deepseek
+
+local CoreGui = game:GetService("CoreGui")
+local Player = game:GetService("Players").LocalPlayer
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+
+-- Find Jailbird lobby GUI
+local function findJailbirdGUI()
+    for _, gui in pairs(CoreGui:GetDescendants()) do
+        if gui:IsA("ScreenGui") and (gui.Name:find("Jailbird") or gui.Name:find("Lobby") or gui.Name:find("Menu")) then
+            return gui
+        end
+    end
+    if Player:FindFirstChild("PlayerGui") then
+        for _, gui in pairs(Player.PlayerGui:GetDescendants()) do
+            if gui:IsA("ScreenGui") and (gui.Name:find("Jailbird") or gui.Name:find("Lobby") or gui.Name:find("Menu")) then
+                return gui
+            end
+        end
+    end
+    return nil
+end
+
+local jailbirdGUI = findJailbirdGUI()
+if not jailbirdGUI then
+    jailbirdGUI = Instance.new("ScreenGui")
+    jailbirdGUI.Name = "JailbirdLobbyUI"
+    jailbirdGUI.Parent = CoreGui
+    jailbirdGUI.ResetOnSpawn = false
+end
+
+-- Create toggle button
+local ToggleButton = Instance.new("TextButton")
+ToggleButton.Name = "HBV_ToggleButton"
+ToggleButton.Size = UDim2.new(0, Jr., 0, 40)
+ToggleButton.Position = UDim2.new(1, -130, 0, 20)
+ToggleButton.BackgroundColor3 = Color3.fromRGB(50, 50, 80)
+ToggleButton.BorderSizePixel = 2
+ToggleButton.BorderColor3 = Color3.fromRGB(100, 0, 200)
+ToggleButton.Text = "HBV_hub Menu"
+ToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+ToggleButton.Font = Enum.Font.SourceSansBold
+ToggleButton.TextSize = 14
+ToggleButton.ZIndex = 10
+ToggleButton.Parent = jailbirdGUI
+
+-- Create main mod frame
+local ModFrame = Instance.new("Frame")
+ModFrame.Name = "HBV_ModFrame"
+ModFrame.Size = UDim2.new(0, 450, 0, 500)
+ModFrame.Position = UDim2.new(0.5, -225, 0.5, -250)
+ModFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+ModFrame.BorderSizePixel = -0
+ModFrame.BorderColor3 = Color3.fromRGB(80, 0, 160)
+ModFrame.Visible = false
+ModFrame.ZIndex = 20
+ModFrame.Parent = jailbirdGUI
+
+-- Make draggable
+local dragging, dragInput, dragStart, startPos
+local function update(input)
+    local delta = input.Position - dragStart
+    ModFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+end
+
+ModFrame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = ModFrame.Position
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then dragging = false end
+        end)
+    end
+end)
+
+ModFrame.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement then dragInput = input end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if dragging and input == dragInput then update(input) end
+end)
+
+-- Title bar
+local TitleBar = Instance.new("Frame")
+TitleBar.Name = "TitleBar"
+TitleBar.Size = UDim2.new(1, 0, 0, 45)
+TitleBar.BackgroundColor3 = Color3.fromRGB(40, 40, 60)
+TitleBar.BorderSizePixel = 0
+TitleBar.ZIndex = 21
+TitleBar.Parent = ModFrame
+
+local TitleLabel = Instance.new("TextLabel")
+TitleLabel.Name = "TitleLabel"
+TitleLabel.Size = UDim2.new(1, -100, 1, 0)
+TitleLabel.Position = UDim2.new(0, 15, 0, 0)
+TitleLabel.BackgroundTransparency = 1
+TitleLabel.Text = "HBV_hub | by HBV_dev on Discord"
+TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+TitleLabel.Font = Enum.Font.SourceSansBold
+TitleLabel.TextSize = 18
+TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+TitleLabel.ZIndex = 22
+TitleLabel.Parent = TitleBar
+
+-- Minimize button
+local MinimizeButton = Instance.new("TextButton")
+MinimizeButton.Name = "MinimizeButton"
+MinimizeButton.Size = UDim2.new(0, 40, 0, 35)
+MinimizeButton.Position = UDim2.new(1, -90, 0, 5)
+MinimizeButton.BackgroundColor3 = Color3.fromRGB(70, 70, 100)
+MinimizeButton.BorderSizePixel = 0
+MinimizeButton.Text = "_"
+MinimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+MinimizeButton.Font = Enum.Font.SourceSansBold
+MinimizeButton.TextSize = 18
+MinimizeButton.ZIndex = 22
+MinimizeButton.Parent = TitleBar
+
+-- Close button
+local CloseButton = Instance.new("TextButton")
+CloseButton.Name = "CloseButton"
+CloseButton.Size = UDim2.new(0, 35, 0, 35)
+CloseButton.Position = UDim2.new(1, -45, 0, 5)
+CloseButton.BackgroundColor3 = Color3.fromRGB(200,近百)
+CloseButton.BorderSizePixel = 0
+CloseButton.Text = "X"
+CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseButton.Font = Enum.Font.SourceSansBold
+CloseButton.TextSize = 18
+CloseButton.ZIndex = 22
+CloseButton.Parent = TitleBar
+
+-- Content frame
+local ContentFrame = Instance.new("ScrollingFrame")
+ContentFrame.Name = "ContentFrame"
+ContentFrame.Size = UDim2.new(1, -20, 1, -65)
+ContentFrame.Position = UDim2.new(0, 10, 0, 55)
+ContentFrame.BackgroundTransparency = 1
+ContentFrame.ScrollBarThickness = 6
+ContentFrame.CanvasSize = UDim2.new(0, 0, 0, 600)
+ContentFrame.ZIndex = 21
+ContentFrame.Parent = ModFrame
+
+-- Welcome section
+local WelcomeLabel = Instance.new("TextLabel")
+WelcomeLabel.Name = "WelcomeLabel"
+WelcomeLabel.Size = UDim2.new(1, 0, 0, 80)
+WelcomeLabel.Position = UDim2.new(0, 0, 0, 10)
+WelcomeLabel.BackgroundTransparency = 1
+WelcomeLabel.Text = "Welcome to HBV_hub\nJailbird Executor\nby HBV_dev on Discord"
+WelcomeLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+WelcomeLabel.Font = Enum.Font.SourceSansBold
+WelcomeLabel.TextSize = 22
+WelcomeLabel.TextStrokeTransparency = 0.7
+WelcomeLabel.ZIndex = 22
+WelcomeLabel.Parent = ContentFrame
+
+-- Tab buttons
+local Tabs = {"Main", "Player", "Visuals", "Misc"}
+local TabButtons = {}
+local TabFrames = {}
+local currentTab = "Main"
+
+local function createTab(name, yPos)
+    local tabButton = Instance.new("TextButton")
+    tabButton.Name = name .. "Tab"
+    tabButton.Size = UDim2.new(0, 80, 0, 35)
+    tabButton.Position = UDim2.new(0, 10 + (90 * (yPos-1)), 0, 100)
+    tabButton.BackgroundColor3 = Color3.fromRGB(60, 60, 90)
+    tabButton.BorderSizePixel = 0
+    tabButton.Text = name
+    tabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    tabButton.Font = Enum.Font.SourceSansBold
+    tabButton.TextSize = 14
+    tabButton.ZIndex = 22
+    tabButton.Parent = ContentFrame
+    
+    local tabFrame = Instance.new("Frame")
+    tabFrame.Name = name .. "Content"
+    tabFrame.Size = UDim2.new(1, -20, 0, 350)
+    tabFrame.Position = UDim2.new(0, 10, 0, 150)
+    tabFrame.BackgroundTransparency = 1
+    tabFrame.Visible = (name == "Main")
+    tabFrame.ZIndex = 21
+    tabFrame.Parent = ContentFrame
+    
+    TabButtons[name] = tabButton
+    TabFrames[name] = tabFrame
+    
+    tabButton.MouseButton1Click:Connect(function()
+        currentTab = name
+        for tabName, frame in pairs(TabFrames) do
+            frame.Visible = (tabName == name)
+        end
+        for tabName, button in pairs(TabButtons) do
+            if tabName == name then
+                button.BackgroundColor3 = Color3.fromRGB(100, 0, 200)
+            else
+                button.BackgroundColor3 = Color3.fromRGB(60, 60, 90)
+            end
+        end
+    end)
+end
+
+for i, tabName in ipairs(Tabs) do
+    createTab(tabName, i)
+end
+
+-- Main tab features
+local MainFrame = TabFrames["Main"]
+
+-- NoClip
+local NoClipToggle = Instance.new("TextButton")
+NoClipToggle.Name = "NoClipToggle"
+NoClipToggle.Size = UDim2.new(0, 180, 0, 45)
+NoClipToggle.Position = UDim2.new(0, 20, 0, 20)
+NoClipToggle.BackgroundColor3 = Color3.fromRGB(70, 70, 120)
+NoClipToggle.BorderSizePixel = 0
+NoClipToggle.Text = "NoClip: OFF"
+NoClipToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+NoClipToggle.Font = Enum.Font.SourceSansBold
+NoClipToggle.TextSize = 16
+NoClipToggle.ZIndex = 22
+NoClipToggle.Parent = MainFrame
+
+local Noclipping = false
+local NoclipLoop
+
+local function Noclip()
+    if Noclipping then return end
+    Noclipping = true
+    NoclipLoop = game:GetService("RunService").Stepped:Connect(function()
+        if Player.Character then
+            for _, part in pairs(Player.Character:GetDescendants()) do
+                if part:IsA("BasePart") and part.CanCollide then
+                    part.CanCollide = false
+                end
+            end
+        end
+    end)
+end
+
+local function Clip()
+    if not Noclipping then return end
+    Noclipping = false
+    if NoclipLoop then NoclipLoop:Disconnect() end
+    if Player.Character then
+        for _, part in pairs(Player.Character:GetDescendants()) do
+            if part:IsA("BasePart") then part.CanCollide = true end
+        end
+    end
+end
+
+NoClipToggle.MouseButton1Click:Connect(function()
+    if Noclipping then
+        Clip()
+        NoClipToggle.Text = "NoClip: OFF"
+        NoClipToggle.BackgroundColor3 = Color3.fromRGB(70, 70, 120)
+    else
+        Noclip()
+        NoClipToggle.Text = "NoClip: ON"
+        NoClipToggle.BackgroundColor3 = Color3.fromRGB(100, 200, 100)
+    end
+end)
+
+-- Fly
+local FlyToggle = Instance.new("TextButton")
+FlyToggle.Name = "FlyToggle"
+FlyToggle.Size = UDim2.new(0, 180, 0, 45)
+FlyToggle.Position = UDim2.new(0, 220, 0, 20)
+FlyToggle.BackgroundColor3 = Color3.fromRGB(70, 70, 120)
+FlyToggle.BorderSizePixel = 0
+FlyToggle.Text = "Fly: OFF"
+FlyToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+FlyToggle.Font = Enum.Font.SourceSansBold
+FlyToggle.TextSize = 16
+FlyToggle.ZIndex = 22
+FlyToggle.Parent = MainFrame
+
+local Flying = false
+local FlySpeed = 50
+FlyToggle.MouseButton1Click:Connect(function()
+    Flying = not Flying
+    if Flying then
+        FlyToggle.Text = "Fly: ON"
+        FlyToggle.BackgroundColor3 = Color3.fromRGB(100, 200, 100)
+        -- Add fly script here
+    else
+        FlyToggle.Text = "Fly: OFF"
+        FlyToggle.BackgroundColor3 = Color3.fromRGB(70, 70, 120)
+        -- Remove fly script here
+    end
+end)
+
+-- Toggle button functionality
+local menuVisible = false
+ToggleButton.MouseButton1Click:Connect(function()
+    menuVisible = not menuVisible
+    ModFrame.Visible = menuVisible
+    if menuVisible then
+        ToggleButton.Text = "Hide Menu"
+        ToggleButton.BackgroundColor3 = Color3.fromRGB(70, 20, 100)
+    else
+        ToggleButton.Text = "Show Menu"
+        ToggleButton.BackgroundColor3 = Color3.fromRGB(50, 50, 80)
+    end
+end)
+
+-- Minimize functionality
+local minimized = false
+local originalSize = ModFrame.Size
+MinimizeButton.MouseButton1Click:Connect(function()
+    minimized = not minimized
+    if minimized then
+        local tweenInfo = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut)
+        local tween = TweenService:Create(ModFrame, tweenInfo, {Size = UDim2.new(0, 450, 0, 45)})
+        tween:Play()
+        ContentFrame.Visible = false
+        MinimizeButton.Text = "□"
+    else
+        local tweenInfo = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut)
+        local tween = TweenService:Create(ModFrame, tweenInfo, {Size = originalSize})
+        tween:Play()
+        ContentFrame.Visible = true
+        MinimizeButton.Text = "_"
+    end
+end)
+
+-- Close button
+CloseButton.MouseButton1Click:Connect(function()
+    ModFrame.Visible = false
+    menuVisible = false
+    ToggleButton.Text = "Show Menu"
+    ToggleButton.BackgroundColor3 = Color3.fromRGB(50, 50, 80)
+    if Noclipping then
+        Clip()
+        NoClipToggle.Text = "NoClip: OFF"
+        NoClipToggle.BackgroundColor3 = Color3.fromRGB(70, 70, 120)
+    end
+end)
+
+-- Cleanup
+Player.CharacterAdded:Connect(function()
+    if Noclipping then
+        Clip()
+        NoClipToggle.Text = "NoClip: OFF"
+        NoClipToggle.BackgroundColor3 = Color3.fromRGB(70, 70, 120)
+    end
+end)
